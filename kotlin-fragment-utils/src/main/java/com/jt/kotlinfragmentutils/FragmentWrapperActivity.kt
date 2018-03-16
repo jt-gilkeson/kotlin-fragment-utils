@@ -46,13 +46,17 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          *
          * @param context The calling context being used to instantiate the activity.
          * @param fragmentClass The fragment class that is to be launched inside this activity.
+         * @param title Optional String or Resource ID for activity title
+         * @param theme Optional Resource ID for activity theme
+         * @param tag Optional fragment tag
          * @param activityClass Optional activity class (use for inherited classes), defaults to FragmentWrapperActivity.
+         * @return intent for activity
          */
         fun newIntent(context: Context,
                       fragmentClass: Class<*>,
-                      tag: String? = null,
                       title: Any? = null,
                       theme: Int? = null,
+                      tag: String? = null,
                       activityClass: Class<*>? = FragmentWrapperActivity::class.java) = Intent(context, activityClass).apply {
             putExtra(FRAGMENT_NAME, fragmentClass.name)
             putExtra(FRAGMENT_TAG, tag ?: fragmentClass.name)
