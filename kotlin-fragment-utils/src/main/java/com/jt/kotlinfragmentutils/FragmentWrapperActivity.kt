@@ -31,12 +31,12 @@ open class FragmentWrapperActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "SimpleFragmentActivity"
+        private const val TAG = "FragmentWrapperActivity"
 
-        private const val TITLE = "sfaActivityTitle"
-        private const val THEME = "sfaActivityTheme"
-        private const val FRAGMENT_NAME = "sfaFragmentName"
-        private const val FRAGMENT_TAG = "sfaFragmentTag"
+        private const val TITLE = "fwaActivityTitle"
+        private const val THEME = "fwaActivityTheme"
+        private const val FRAGMENT_NAME = "fwaFragmentName"
+        private const val FRAGMENT_TAG = "fwaFragmentTag"
 
         /**
          *  Creates an Intent to launch the FragmentWrapperActivity (or specified inherited Activity)
