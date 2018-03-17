@@ -46,7 +46,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          *
          * @param context The calling context being used to instantiate the activity.
          * @param fragmentClass The fragment class that is to be launched inside this activity.
-         * @param title Optional String or Resource ID for activity title
+         * @param title Optional Resource ID for activity title
          * @param theme Optional Resource ID for activity theme
          * @param tag Optional fragment tag
          * @param activityClass Optional activity class (use for inherited classes), defaults to FragmentWrapperActivity.
@@ -54,19 +54,35 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          */
         fun newIntent(context: Context,
                       fragmentClass: Class<*>,
-                      title: Any? = null,
+                      title: Int? = null,
+                      theme: Int? = null,
+                      tag: String? = null,
+                      activityClass: Class<*>? = FragmentWrapperActivity::class.java) =
+                newIntent(context, fragmentClass, title?.let { context.getString(title) } ?: "", theme, tag, activityClass)
+
+        /**
+         *  Creates an Intent to launch the FragmentWrapperActivity (or specified inherited Activity)
+         *  with the arguments supplied.  It does not start the activity.  This allows
+         *  the user to add additional extras before starting the activity.  It also allows the user to
+         *  decide whether to startActivity or startActivityForResult with this intent.
+         *
+         * @param context The calling context being used to instantiate the activity.
+         * @param fragmentClass The fragment class that is to be launched inside this activity.
+         * @param title String for activity title
+         * @param theme Optional Resource ID for activity theme
+         * @param tag Optional fragment tag
+         * @param activityClass Optional activity class (use for inherited classes), defaults to FragmentWrapperActivity.
+         * @return intent for activity
+         */
+        fun newIntent(context: Context,
+                      fragmentClass: Class<*>,
+                      title: String,
                       theme: Int? = null,
                       tag: String? = null,
                       activityClass: Class<*>? = FragmentWrapperActivity::class.java) = Intent(context, activityClass).apply {
             putExtra(FRAGMENT_NAME, fragmentClass.name)
             putExtra(FRAGMENT_TAG, tag ?: fragmentClass.name)
-            title?.let {
-                putExtra(TITLE, when (title) {
-                    is Int -> context.getString(title)
-                    is String -> title
-                    else -> title.toString()
-                })
-            }
+            if (title.isNotBlank()) putExtra(TITLE, title)
             theme?.let { putExtra(THEME, theme) }
         }
     }
@@ -78,9 +94,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
 
         // set theme if specified
         extras?.getInt(THEME)?.let {
-            if (it > 0) {
-                setTheme(it)
-            }
+            if (it > 0) setTheme(it)
         }
 
         super.onCreate(savedInstanceState)
