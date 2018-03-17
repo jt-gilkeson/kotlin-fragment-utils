@@ -39,7 +39,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         private const val FRAGMENT_TAG = "fwaFragmentTag"
 
         /**
-         *  Creates an Intent to launch the FragmentWrapperActivity (or specified inherited Activity)
+         *  Creates an Intent to launch the FragmentWrapperActivity (or specified derived Activity)
          *  with the arguments supplied.  It does not start the activity.  This allows
          *  the user to add additional extras before starting the activity.  It also allows the user to
          *  decide whether to startActivity or startActivityForResult with this intent.
@@ -49,7 +49,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          * @param title Optional Resource ID for activity title
          * @param theme Optional Resource ID for activity theme
          * @param tag Optional fragment tag
-         * @param activityClass Optional activity class (use for inherited classes), defaults to FragmentWrapperActivity.
+         * @param activityClass Optional activity class (use for derived classes), defaults to FragmentWrapperActivity.
          * @return intent for activity
          */
         @JvmStatic
@@ -63,7 +63,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
                 newIntent(context, fragmentClass, title?.let { context.getString(title) }, theme, tag, activityClass)
 
         /**
-         *  Creates an Intent to launch the FragmentWrapperActivity (or specified inherited Activity)
+         *  Creates an Intent to launch the FragmentWrapperActivity (or specified derived Activity)
          *  with the arguments supplied.  It does not start the activity.  This allows
          *  the user to add additional extras before starting the activity.  It also allows the user to
          *  decide whether to startActivity or startActivityForResult with this intent.
@@ -73,7 +73,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          * @param title String for activity title
          * @param theme Optional Resource ID for activity theme
          * @param tag Optional fragment tag
-         * @param activityClass Optional activity class (use for inherited classes), defaults to FragmentWrapperActivity.
+         * @param activityClass Optional activity class (use for derived classes), defaults to FragmentWrapperActivity.
          * @return intent for activity
          */
         @JvmStatic
