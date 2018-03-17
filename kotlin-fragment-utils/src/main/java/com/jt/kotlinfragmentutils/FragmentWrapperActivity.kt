@@ -58,7 +58,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
                       theme: Int? = null,
                       tag: String? = null,
                       activityClass: Class<*>? = FragmentWrapperActivity::class.java) =
-                newIntent(context, fragmentClass, title?.let { context.getString(title) } ?: "", theme, tag, activityClass)
+                newIntent(context, fragmentClass, title?.let { context.getString(title) }, theme, tag, activityClass)
 
         /**
          *  Creates an Intent to launch the FragmentWrapperActivity (or specified inherited Activity)
@@ -76,13 +76,13 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          */
         fun newIntent(context: Context,
                       fragmentClass: Class<*>,
-                      title: String,
+                      title: String?,
                       theme: Int? = null,
                       tag: String? = null,
                       activityClass: Class<*>? = FragmentWrapperActivity::class.java) = Intent(context, activityClass).apply {
             putExtra(FRAGMENT_NAME, fragmentClass.name)
             putExtra(FRAGMENT_TAG, tag ?: fragmentClass.name)
-            if (title.isNotBlank()) putExtra(TITLE, title)
+            title?.let { putExtra(TITLE, title) }
             theme?.let { putExtra(THEME, theme) }
         }
     }
