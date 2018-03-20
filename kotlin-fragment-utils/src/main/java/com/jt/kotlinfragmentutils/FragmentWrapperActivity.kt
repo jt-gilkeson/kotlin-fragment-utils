@@ -86,8 +86,8 @@ open class FragmentWrapperActivity : AppCompatActivity() {
                       activityClass: Class<*>? = FragmentWrapperActivity::class.java) = Intent(context, activityClass).apply {
             putExtra(FRAGMENT_NAME, fragmentClass.name)
             putExtra(FRAGMENT_TAG, tag ?: fragmentClass.name)
-            title?.also { putExtra(TITLE, title) }
-            theme?.also { putExtra(THEME, theme) }
+            title?.let { putExtra(TITLE, title) }
+            theme?.let { putExtra(THEME, theme) }
         }
     }
 
@@ -97,7 +97,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         val extras = intent.extras
 
         // set theme if specified
-        extras?.getInt(THEME)?.also {
+        extras?.getInt(THEME)?.let {
             if (it > 0) setTheme(it)
         }
 
@@ -110,7 +110,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         }
 
         // set title if specified
-        extras.getString(TITLE)?.also { title = it }
+        extras.getString(TITLE)?.let { title = it }
 
         if (savedInstanceState == null) {
             val frag = Fragment.instantiate(this, extras.getString(FRAGMENT_NAME), extras)
@@ -125,7 +125,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // See if we have a home listener
         if (item.itemId == android.R.id.home) {
-            navigationListener?.also {
+            navigationListener?.let {
                 if (it.onHomePressed()) return true
             }
         }
@@ -135,7 +135,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         // See if the listener wants to handle this event
-        navigationListener?.also {
+        navigationListener?.let {
             if (it.onBackPressed()) return
         }
 
