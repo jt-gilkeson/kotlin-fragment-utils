@@ -52,8 +52,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          * @param activityClass Optional activity class (use for derived classes), defaults to FragmentWrapperActivity.
          * @return intent for activity
          */
-        @JvmStatic
-        @JvmOverloads
+        @JvmStatic @JvmOverloads
         fun newIntent(context: Context,
                       fragmentClass: Class<*>,
                       title: Int? = null,
@@ -76,8 +75,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          * @param activityClass Optional activity class (use for derived classes), defaults to FragmentWrapperActivity.
          * @return intent for activity
          */
-        @JvmStatic
-        @JvmOverloads
+        @JvmStatic @JvmOverloads
         fun newIntent(context: Context,
                       fragmentClass: Class<*>,
                       title: String?,
