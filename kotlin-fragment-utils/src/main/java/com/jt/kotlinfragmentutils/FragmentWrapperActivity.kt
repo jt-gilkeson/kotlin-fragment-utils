@@ -23,11 +23,25 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.MenuItem
 
-
+/**
+ * Basic Activity that handles displaying a custom fragment.
+ *
+ * The fragment can intercept action bar's home/up menu item via onOptionsItemSelected() and
+ * can also intercept onBackPressed() by implementing BackPressedListener.
+ */
 open class FragmentWrapperActivity : AppCompatActivity() {
-    interface FragmentNavigationListener {
+    /**
+     * Listener to intercept FragmentWrapperActivity's onBackPressed() events
+     */
+    interface BackPressedListener {
+        /**
+         * Called when the activity has detected the user's press of the back key. The default
+         * implementation simply finishes the current activity, but you can override this to do
+         * whatever you want.
+         *
+         * @return Return false to allow normal back key processing, true to consume it here.
+         */
         fun onBackPressed(): Boolean
-        fun onHomePressed(): Boolean
     }
 
     companion object {
@@ -89,7 +103,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         }
     }
 
-    var navigationListener: FragmentNavigationListener? = null
+    protected var fragmentTag: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val extras = intent.extras
@@ -112,30 +126,29 @@ open class FragmentWrapperActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             val frag = Fragment.instantiate(this, extras.getString(FRAGMENT_NAME), extras)
+            fragmentTag = extras.getString(FRAGMENT_TAG)
 
             supportFragmentManager
                     .beginTransaction()
-                    .add(android.R.id.content, frag, extras.getString(FRAGMENT_TAG))
+                    .add(android.R.id.content, frag, fragmentTag)
                     .commit()
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // See if we have a home listener
-        if (item.itemId == android.R.id.home) {
-            navigationListener?.let {
-                if (it.onHomePressed()) return true
-            }
+        // See if fragment wants to handle home
+        if (item.itemId == android.R.id.home &&
+                supportFragmentManager.findFragmentByTag(fragmentTag).onOptionsItemSelected(item)) {
+            return true
         }
 
         return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
-        // See if the listener wants to handle this event
-        navigationListener?.let {
-            if (it.onBackPressed()) return
-        }
+        // See if fragment wants to handle back pressed
+        val frag = supportFragmentManager.findFragmentByTag(fragmentTag)
+        if (frag is BackPressedListener && frag.onBackPressed())  return
 
         super.onBackPressed()
     }
