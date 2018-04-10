@@ -103,7 +103,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         }
     }
 
-    protected var fragmentTag: String? = null
+    protected lateinit var fragmentTag: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val extras = intent.extras
@@ -124,9 +124,10 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         // set title if specified
         extras.getString(TITLE)?.let { title = it }
 
+        fragmentTag = extras.getString(FRAGMENT_TAG)
+
         if (savedInstanceState == null) {
             val frag = Fragment.instantiate(this, extras.getString(FRAGMENT_NAME), extras)
-            fragmentTag = extras.getString(FRAGMENT_TAG)
 
             supportFragmentManager
                     .beginTransaction()
@@ -148,7 +149,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
     override fun onBackPressed() {
         // See if fragment wants to handle back pressed
         val frag = supportFragmentManager.findFragmentByTag(fragmentTag)
-        if (frag is BackPressedListener && frag.onBackPressed())  return
+        if (frag is BackPressedListener && frag.onBackPressed()) return
 
         super.onBackPressed()
     }
