@@ -23,6 +23,12 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.MenuItem
 
+private const val TAG = "FragmentWrapperActivity"
+private const val TITLE = "fwaActivityTitle"
+private const val THEME = "fwaActivityTheme"
+private const val FRAGMENT_NAME = "fwaFragmentName"
+private const val FRAGMENT_TAG = "fwaFragmentTag"
+
 /**
  * Basic Activity that handles displaying a custom fragment.
  *
@@ -30,28 +36,7 @@ import android.view.MenuItem
  * can also intercept onBackPressed() by implementing BackPressedListener.
  */
 open class FragmentWrapperActivity : AppCompatActivity() {
-    /**
-     * Listener to intercept FragmentWrapperActivity's onBackPressed() events
-     */
-    interface BackPressedListener {
-        /**
-         * Called when the activity has detected the user's press of the back key. The default
-         * implementation simply finishes the current activity, but you can override this to do
-         * whatever you want.
-         *
-         * @return Return false to allow normal back key processing, true to consume it here.
-         */
-        fun onBackPressed(): Boolean
-    }
-
     companion object {
-        private const val TAG = "FragmentWrapperActivity"
-
-        private const val TITLE = "fwaActivityTitle"
-        private const val THEME = "fwaActivityTheme"
-        private const val FRAGMENT_NAME = "fwaFragmentName"
-        private const val FRAGMENT_TAG = "fwaFragmentTag"
-
         /**
          *  Creates an Intent to launch the FragmentWrapperActivity (or specified derived Activity)
          *  with the arguments supplied.  It does not start the activity.  This allows
@@ -60,7 +45,7 @@ open class FragmentWrapperActivity : AppCompatActivity() {
          *
          * @param context The calling context being used to instantiate the activity.
          * @param fragmentClass The fragment class that is to be launched inside this activity.
-         * @param title Optional Resource ID for activity title
+         * @param title Optional Title for activity (String or Resource ID)
          * @param theme Optional Resource ID for activity theme
          * @param tag Optional fragment tag
          * @param activityClass Optional activity class (use for derived classes), defaults to FragmentWrapperActivity.
@@ -69,39 +54,29 @@ open class FragmentWrapperActivity : AppCompatActivity() {
         @JvmStatic @JvmOverloads
         fun newIntent(context: Context,
                       fragmentClass: Class<*>,
-                      title: Int? = null,
-                      theme: Int? = null,
-                      tag: String? = null,
-                      activityClass: Class<*>? = FragmentWrapperActivity::class.java) =
-                newIntent(context, fragmentClass, title?.let { context.getString(title) }, theme, tag, activityClass)
-
-        /**
-         *  Creates an Intent to launch the FragmentWrapperActivity (or specified derived Activity)
-         *  with the arguments supplied.  It does not start the activity.  This allows
-         *  the user to add additional extras before starting the activity.  It also allows the user to
-         *  decide whether to startActivity or startActivityForResult with this intent.
-         *
-         * @param context The calling context being used to instantiate the activity.
-         * @param fragmentClass The fragment class that is to be launched inside this activity.
-         * @param title String for activity title
-         * @param theme Optional Resource ID for activity theme
-         * @param tag Optional fragment tag
-         * @param activityClass Optional activity class (use for derived classes), defaults to FragmentWrapperActivity.
-         * @return intent for activity
-         */
-        @JvmStatic @JvmOverloads
-        fun newIntent(context: Context,
-                      fragmentClass: Class<*>,
-                      title: String?,
+                      title: Title = Title.NoTitle,
                       theme: Int? = null,
                       tag: String? = null,
                       activityClass: Class<*>? = FragmentWrapperActivity::class.java) = Intent(context, activityClass).apply {
             putExtra(FRAGMENT_NAME, fragmentClass.name)
             putExtra(FRAGMENT_TAG, tag ?: fragmentClass.name)
-            title?.let { putExtra(TITLE, title) }
+            when (title) {
+                is Title.StringTitle -> putExtra(TITLE, title.name)
+                is Title.IdTitle -> putExtra(TITLE, context.getString(title.id))
+                is Title.NoTitle -> {}
+            }
             theme?.let { putExtra(THEME, theme) }
         }
     }
+
+    /**
+     * Called when the activity has detected the user's press of the back key. The default
+     * implementation simply finishes the current activity, but you can override this to do
+     * whatever you want.
+     *
+     * @return Return false to allow normal back key processing, true to consume it here.
+    */
+    var backPressedListener: (() -> Boolean)? = null
 
     protected lateinit var fragmentTag: String
 
@@ -148,9 +123,19 @@ open class FragmentWrapperActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         // See if fragment wants to handle back pressed
-        val frag = supportFragmentManager.findFragmentByTag(fragmentTag)
-        if (frag is BackPressedListener && frag.onBackPressed()) return
+        backPressedListener?.let {
+            if (it.invoke()) return
+        }
 
         super.onBackPressed()
+    }
+
+    /**
+     * Type of title for Activity (String, Resource ID, None)
+     */
+    sealed class Title {
+        class StringTitle(val name: String) : Title()
+        class IdTitle(val id: Int) : Title()
+        object NoTitle : Title()
     }
 }
